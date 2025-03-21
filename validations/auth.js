@@ -7,3 +7,8 @@ export const registerValidation = [
     body('avatarUrl').optional().isURL().withMessage('Avatar URL is not valid'),
 
 ];
+
+export const loginValidation = [
+    body('email').isEmail().withMessage('Email is not valid'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+]

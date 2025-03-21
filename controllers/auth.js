@@ -5,13 +5,7 @@ import { createToken } from '../utils/jwt.js';
 import { HttpError } from '../utils/httpError.js';
 
 export const register = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            errors: errors.array()
-        })
-    };
-
+  
     const passwordHash = await bcrypt.hash(req.body.password, 10);
 
     const newUser = new UserModel({
@@ -73,3 +67,4 @@ export const getMe = async (req, res) => {
         _id
     })
 }
+
