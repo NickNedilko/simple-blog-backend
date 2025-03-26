@@ -16,8 +16,14 @@ export const createPost = async (req, res) => {
     res.status(201).json(post);
 }
 
-export const getAllPosts = async (req, res) => {
-    const posts = await PostModel.find()
+export const getLastTags = async (req, res) => {
+    const posts = await PostModel.find().sort({ createdAt: -1 }).limit(5);
+    const tags = posts.map(post => post.tags).flat().slice(0, 5);
+    res.json(tags);
+}
+
+ export const getAllPosts = async (req, res) => {
+    const posts = await PostModel.find().limit(5).populate('user', '-_id -password -email -token -passwordHash').sort({ createdAt: -1 });
     res.json(posts);
 }
 
@@ -28,7 +34,7 @@ export const getOnePost = async (req, res) => {
             { _id: postId },
             { $inc: { viewsCount: 1 } },
             { new: true } // Это вернёт обновлённый документ
-        );
+        ).populate('user', '-_id -password -email -token -passwordHash');
 
     if (!doc) {
             throw HttpError(404, 'Post not found');

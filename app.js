@@ -8,7 +8,9 @@ dotenv.config();
 
 export const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://simple-blog-alpha-green.vercel.app/'] 
+}));
 app.use(express.json()); 
 
 app.use('/api/auth', authRouter);
