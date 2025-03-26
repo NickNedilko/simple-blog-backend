@@ -4,7 +4,6 @@ import { HttpError } from "../utils/httpError.js";
 
 
 export const createPost = async (req, res) => {
-    console.log(req.body)
     const errors = validationResult(req);
     console.log(errors)
     if (!errors.isEmpty()) {
@@ -18,7 +17,7 @@ export const createPost = async (req, res) => {
 }
 
 export const getAllPosts = async (req, res) => {
-    const posts = await PostModel.find().populate('user').exec();
+    const posts = await PostModel.find()
     res.json(posts);
 }
 
