@@ -68,3 +68,15 @@ export const getMe = async (req, res) => {
     })
 }
 
+export const logout = async (req, res) => {
+    const { _id } = req.user;
+  
+    const user = await UserModel.findByIdAndUpdate(_id, { token: '' }, { new: true });
+    if (!user) {
+         throw HttpError(404, 'User not found')
+    }
+    res.json({
+        message: 'Logout succes'
+    })
+}
+
