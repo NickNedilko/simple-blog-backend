@@ -21,7 +21,7 @@ export const register = async (req, res) => {
         _id: user._id
     });
      
-    await User.findByIdAndUpdate(user._id, {token});
+    await UserModel.findByIdAndUpdate(user._id, {token});
 
     const { passwordHash: password, ...userData } = user._doc;
 
