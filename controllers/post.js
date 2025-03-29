@@ -23,7 +23,7 @@ export const getLastTags = async (req, res) => {
 }
 
  export const getAllPosts = async (req, res) => {
-    const posts = await PostModel.find().limit(5).populate('user', '-_id -password -email -token -passwordHash').sort({ createdAt: -1 });
+    const posts = await PostModel.find().limit(5).populate('user', '-password -email -token -passwordHash').sort({ createdAt: -1 });
     res.json(posts);
 }
 
