@@ -13,10 +13,16 @@ import { handleValidationErrors } from "../../middlewares/handleValidationErrors
 export const router = express.Router();
 
 
-router.post('/', authenticate, postValidation, handleValidationErrors, ctrlWrapper(createPost));
+router.post('/add-post', authenticate, postValidation, handleValidationErrors, ctrlWrapper(createPost));
 router.get('/', ctrlWrapper(getAllPosts));
 router.get('/tags', ctrlWrapper(getLastTags));
 router.get('/:id', ctrlWrapper(getOnePost));
 router.delete('/:id', authenticate, ctrlWrapper(removePost));
 router.patch('/:id', authenticate, postValidation, handleValidationErrors, ctrlWrapper(updatePost));
-router.post('/:id', authenticate, upload.single('imageUrl'), ctrlWrapper(uploadImage));
+// router.post('/:id', authenticate, upload.single('imageUrl'), ctrlWrapper(uploadImage));
+router.post('/upload', authenticate, upload.single('imageUrl'), (req, res) => {
+   
+  res.json({
+    url: `/uploads/${req.file.originalname}`,
+  });
+});

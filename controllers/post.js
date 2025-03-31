@@ -67,7 +67,6 @@ export const uploadImage = async (req, res) => {
     const { id } = req.params;
   
     const post = await PostModel.findById(id);
-    console.log(post)
     if (!post) {
         throw HttpError(404, 'Post not found');
     }
@@ -76,8 +75,6 @@ export const uploadImage = async (req, res) => {
         throw HttpError(400, 'No file uploaded');
     }
     post.imageUrl = req.file.path;
-    console.log('sfghjgkhljhkgjfhdgf', post)
-
     await post.save();
 
 
