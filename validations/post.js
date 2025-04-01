@@ -7,7 +7,7 @@ export const postValidation = [
     body('tags').optional().isArray().withMessage('Tags must be an array'),
     body('imageUrl').optional().isURL({
     protocols: ['http', 'https'],
-    host_whitelist: ['localhost', '127.0.0.1', 'simple-blog-backend-rriy.onrender.com'],
+    host_whitelist: ['localhost', '127.0.0.1', 'res.cloudinary.com'],
     require_protocol: true
   }).withMessage('Image URL is not valid'),
 ]

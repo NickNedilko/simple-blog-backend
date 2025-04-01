@@ -1,6 +1,8 @@
 import { validationResult } from "express-validator";
 import PostModel from "../models/Post.js";
 import { HttpError } from "../utils/httpError.js";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
+import { removeFromUploads } from "../utils/removeFromUploads.js";
 
 
 export const createPost = async (req, res) => {
@@ -63,26 +65,43 @@ export const updatePost = async (req, res) => {
     res.json(post);
 }
 
-export const uploadImage = async (req, res) => {
-    const { id } = req.params;
-  
-    const post = await PostModel.findById(id);
-    if (!post) {
-        throw HttpError(404, 'Post not found');
-    }
-
-    if (!req.file) {
-        throw HttpError(400, 'No file uploaded');
-    }
-    post.imageUrl = req.file.path;
-    await post.save();
-
-
-    res.status(200).json({
-        msg: 'Upload photo success'
-    })
-}
-
 // export const uploadImage = async (req, res) => {
-// res.json({ url: `/uploads/${req.file.originalname}` })
+//     const { id } = req.params;
+  
+//     const post = await PostModel.findById(id);
+//     if (!post) {
+//         throw HttpError(404, 'Post not found');
+//     }
+
+//     if (!req.file) {
+//         throw HttpError(400, 'No file uploaded');
+//     }
+//     post.imageUrl = req.file.path;
+//     await post.save();
+
+
+//     res.status(200).json({
+//         msg: 'Upload photo success'
+//     })
 // }
+
+
+export const uploadPostImage = async (req, res) =>{
+  if (!req.file) {
+    return res.status(400).json({ message: 'Нет файла для загрузки' });
+  }
+
+  try {
+   
+    const response = await uploadToCloudinary(req.file.path);
+      removeFromUploads(req.file.filename);
+    res.json({
+      message: 'Файл загружен успешно!',
+      imageUrl: response.secure_url
+    });
+  } catch (error) {
+    console.error('Ошибка загрузки в Cloudinary:', error);
+    res.status(500).json({ message: 'Ошибка загрузки файла в Cloudinary' });
+  }
+}; 
+
