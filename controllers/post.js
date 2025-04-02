@@ -94,8 +94,9 @@ export const uploadPostImage = async (req, res) =>{
     return res.status(400).json({ message: 'Нет файла для загрузки' });
   }
 
+
   try {
-    const response = await uploadToCloudinary(req.file.buffer, req.file.originalname);
+    const response = await uploadToCloudinary(req.file.buffer);
     res.json({
       message: 'Файл загружен успешно!',
       imageUrl: response.secure_url
