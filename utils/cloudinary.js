@@ -1,4 +1,5 @@
-import {v2 as cloudinary} from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
+import streamifier from 'streamifier';
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 
@@ -6,14 +7,23 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET 
   });
 
-export const uploadToCloudinary = (filePath) => {
+
+
+export const uploadToCloudinary = (fileBuffer) => {
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(filePath, (error, result) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(result);
+    // Создаем стрим из буфера и загружаем его в Cloudinary
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: 'auto' }, // auto позволяет загружать любые типы файлов
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
       }
-    });
+    );
+
+    // Стримируем буфер в Cloudinary
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
   });
 };

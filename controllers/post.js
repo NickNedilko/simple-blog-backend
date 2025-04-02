@@ -2,12 +2,11 @@ import { validationResult } from "express-validator";
 import PostModel from "../models/Post.js";
 import { HttpError } from "../utils/httpError.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
-import { removeFromUploads } from "../utils/removeFromUploads.js";
 
 
 export const createPost = async (req, res) => {
     const errors = validationResult(req);
-    console.log(errors)
+    
     if (!errors.isEmpty()) {
         throw HttpError(400, errors.array()[0].msg);
     }
@@ -26,7 +25,11 @@ export const getLastTags = async (req, res) => {
 
  export const getAllPosts = async (req, res) => {
     const posts = await PostModel.find().limit(5).populate('user', '-password -email -token -passwordHash').sort({ createdAt: -1 });
-    res.json(posts);
+    const postsByViewrs = await PostModel.find().limit(5).populate('user', '-password -email -token -passwordHash').sort({ viewsCount: -1 });
+   res.json({
+       posts,
+       postsByViewrs
+   });
 }
 
 export const getOnePost = async (req, res) => {
@@ -92,9 +95,7 @@ export const uploadPostImage = async (req, res) =>{
   }
 
   try {
-   
-    const response = await uploadToCloudinary(req.file.path);
-      removeFromUploads(req.file.filename);
+    const response = await uploadToCloudinary(req.file.buffer, req.file.originalname);
     res.json({
       message: 'Файл загружен успешно!',
       imageUrl: response.secure_url
