@@ -25,28 +25,31 @@ export const getLastTags = async (req, res) => {
 
  export const getAllPosts = async (req, res) => {
     const posts = await PostModel.find().limit(5).populate('user', '-password -email -token -passwordHash').sort({ createdAt: -1 });
-    const postsByViewrs = await PostModel.find().limit(5).populate('user', '-password -email -token -passwordHash').sort({ viewsCount: -1 });
+    const postsByViewers = await PostModel.find().limit(5).populate('user', '-password -email -token -passwordHash').sort({ viewsCount: -1 });
    res.json({
        posts,
-       postsByViewrs
+       postsByViewers
    });
 }
 
 export const getOnePost = async (req, res) => {
     const postId = req.params.id;
 
-        const doc = await PostModel.findOneAndUpdate(
-            { _id: postId },
-            { $inc: { viewsCount: 1 } },
-            { new: true } // Это вернёт обновлённый документ
-        ).populate('user', '-_id -password -email -token -passwordHash');
+    const post = await PostModel.findOneAndUpdate(
+        { _id: postId },
+        { $inc: { viewsCount: 1 } },
+        { new: true } 
+    ).populate('user', '-_id -password -email -token -passwordHash');
 
-    if (!doc) {
-            throw HttpError(404, 'Post not found');
-        }
 
-        res.json(doc); 
-    
+    if (!post) {
+        throw HttpError(404, 'Post not found');
+    }
+
+   
+    res.json({
+        ...post.toObject(), 
+    });
 };
 
  export const removePost = async (req, res) => {
